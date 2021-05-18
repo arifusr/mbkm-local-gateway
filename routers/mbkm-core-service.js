@@ -7,7 +7,16 @@ const BASE_URL = 'http://localhost:8081'
 const api = apiAdapter(BASE_URL)
 
 router.all('/mbkm*', (req, res) => {
-    api[req.method.toLowerCase()](req.path.replace('/mbkm',''), req.body, {headers: req.headers}).then(resp => {
+    let params
+    const headers = { headers: req.headers }
+    const paths = req.path.replace('/mbkm', '')
+    if (req.method.toLowerCase() == "get") {
+        params = [paths, headers]
+    } else {
+        params = [paths, req.body, headers]
+    }
+
+    api[req.method.toLowerCase()](...params).then(resp => {
         res.status(resp.status).send(resp.data)
     }).catch(e => {
         console.log(e)

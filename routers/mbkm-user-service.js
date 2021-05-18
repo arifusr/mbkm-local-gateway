@@ -7,7 +7,16 @@ const BASE_URL = 'http://localhost:8081'
 const api = apiAdapter(BASE_URL)
 
 router.all('/user*', (req, res) => {
-    api[req.method.toLowerCase()](req.path.replace("/user/", "/"), req.body).then(resp => {
+    let params
+    const headers = { headers: req.headers }
+    const paths = req.path.replace("/user/", "/")
+    if (req.method.toLowerCase() == "get") {
+        params = [paths, headers]
+    } else {
+        params = [paths, req.body, headers]
+    }
+
+    api[req.method.toLowerCase()](...params).then(resp => {
         res.status(resp.status).send(resp.data)
     }).catch(e => {
         console.log(e)
